@@ -50,22 +50,23 @@ History:........2015.11.23 - New Listing View on Menu 2
 from Tkinter import Tk, Frame, BOTH, Label, Button, Entry, Scrollbar, \
     RIGHT, Y, Text, TOP, NONE, END, W, LEFT
 from PIL import Image, ImageTk
+from time import time
 import os
 import re
 import sys
-import time
 import directory
 import dates
 import messagebox
 import datetime
 import calendar
-import GUI
 
-PATH = os.getcwd()
-ts = time.time()
-st = datetime.datetime.fromtimestamp(ts).strftime(
+
+FULL_PATH = os.path.realpath(__file__)
+PATH, FILENAME = os.path.split(FULL_PATH)
+TS = time()
+ST = datetime.datetime.fromtimestamp(TS).strftime(
     '%Y. %m. %d. %H:%M:%S')
-x = ' '
+X = ' '
 
 main_title = 'Munkaido Nyilvantarto Rendszer'
 main_button1_title = 'Ido adatainak megadasa'
@@ -89,7 +90,7 @@ worktime_report1 = (
     "- - - - - - - - - - - - - - - - - - - - - - -" 
     "\nDatum / Belepes ideje             Datum / Kilepes ideje                Munkaora"
     "\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
-    "- - - - - - - - - - - - - - - - - - - - - - -\n") %(st)
+    "- - - - - - - - - - - - - - - - - - - - - - -\n") %(ST)
 warempty_one = 'Nem sikerult megnyitni.'
 warempty_two = 'Nem letezik ilyen fajl.'
 
@@ -114,7 +115,13 @@ Years = [
             '2016', '2017', '2018',
             '2019',
             ]
-			
+
+def ButtonCreator(Container,Text,
+                  Command,Number):
+     for i in range (0, Number):
+         Button(Container, text = Text[i], 
+                height = 1, width=20,
+                command = Command[i]).pack()			
 			
 class Menu:
 
@@ -141,7 +148,6 @@ class Menu:
         self.MenufourYearsContainer.pack() 
         Label(self.MainMenuContainer, 
 		      text=dates.date()).pack()
-
         CommandOfMainButtons = [
             self.menu_one,
             self.menu_two,
@@ -149,8 +155,7 @@ class Menu:
             self.menu_four,
             self.menu_five,
             ]
-
-        GUI.ButtonCreator(self.MainButtonContainer, 
+        ButtonCreator(self.MainButtonContainer, 
                           ListOfMainButtons,
                           CommandOfMainButtons, 5)
 
@@ -162,7 +167,7 @@ class Menu:
         run.menuone()
 
     def menu_two(self):
-        os.chdir (os.getcwd() + '\\' + str(dates.actualyear()))
+        os.chdir (PATH + '//' + str(dates.actualyear()))
         File = Month = dates.actualmonth(months)
         run.showdata(
 		    Month.title() + 
@@ -250,14 +255,17 @@ class Menu:
     def menufour(self):
         '''This function checks if the The Year is available 
         in the current folder'''
-        Label(self.MenufourYearsContainer, text='Éves Adatok ', font=12,
-              padx=10, pady=10).pack(side=TOP)
+        Label(
+            self.MenufourYearsContainer,
+            text='Éves Adatok ', font=12,
+			padx=10, pady=10).pack(side=TOP)
         self.ListOfFiles = directory.fileall(Years,PATH)
         length = len(self.ListOfFiles)
         for i in range(0, length):
             self.menu_four_sub_one(i)
-        Button(self.MenufourYearsContainer, text='Vissza', height=1,
-               width=20, command=self.quit_menufour).pack()
+        Button(self.MenufourYearsContainer, text='Vissza',
+            height=1, width=20, 
+            command=self.quit_menufour).pack()
 	   
 
     def menu_four_sub_one(self, i):
@@ -283,8 +291,8 @@ class Menu:
     def Buttonpointer(self, i):
         '''It create a button for the file what its found in the list'''
         self.Month = self.ListOfFiles[i]
-        Button(self.MainMenuContainer, text=self.Month, height=1, width=20,
-               command=lambda: self.act(self.ListOfFiles[i])).pack()
+        Button(self.MainMenuContainer, text=self.Month, height=1,
+            width=20, command=lambda: self.act(self.ListOfFiles[i])).pack()
 			   
 #  **************SYSTEM METHODS***************
 
@@ -330,12 +338,12 @@ class Menu:
         Message = 'Datum ' + self.date + '\n' + 'Belepes ideje ' \
             + self.Arrive + '\n' + 'Kilepes ideje ' + self.Out + '\n' \
             + 'Munkaido ' + self.WorkTime
-        Data = 'Datum ' + self.date + ' Belepes ' + self.Arrive + 9 * x \
+        Data = 'Datum ' + self.date + ' Belepes ' + self.Arrive + 9 * X \
             + self.date + ' Kilepes ' + self.Out + ' Ebed ' + self.Meal \
-            + 13 * x + ' Munkaido ' + self.WorkTime
+            + 13 * X + ' Munkaido ' + self.WorkTime
         messagebox.getdata(Message)
         Directory = dates.actualyear()
-        os.chdir(os.getcwd() + '\\'+ str(Directory))
+        os.chdir(PATH + '\\' + str(Directory))
         File = dates.actualmonth(months)
         directory.filewrite(File, Data)
         self.MenuOneContainer.destroy()
@@ -384,9 +392,8 @@ class Menu:
             data_hours = data_min = 0
             bejegyzes = 5
             nap = 0
-
-            Label(showdata, text=Title, font='Bold', padx=10,
-                  pady=10).pack()
+            Label(showdata, text=Title, 
+                font='Bold', padx=10, pady=10).pack()
             begin = 0
             # Start to Read from file
             while 1:
@@ -395,9 +402,7 @@ class Menu:
                         IdoAdatok)
                 Datum_result = re.match('(.*)(Datum)\s*(\d+.\d+.\d+)',
                         IdoAdatok)
-
                 whatday = dates.whatday(Datum_result)
-
                 if Bont_result:
                     work_time = Bont_result.group(3)
                     hours = work_time.split(':')[0]
@@ -433,11 +438,9 @@ class Menu:
                         directory.filewrite(FilePrint, ' SAT \t' + s)
                     elif whatday == 6:
                         directory.filewrite(FilePrint, ' SUN \t' + s)
-
                     bejegyzes = bejegyzes + 1
                     nap = nap + 1
-					  
-					
+		
                 else:
                     requiredmins = (nap*8)*60
                     currentmins = (data_hours *60 + data_min) -requiredmins
