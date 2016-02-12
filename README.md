@@ -14,10 +14,10 @@ printable format.
 Required tools : Python 2.7
 
 Used internal libraries :
--Tkinter
--PIL
--Time
--Os
--Re
--Calendar
+- Tkinter
+- PIL
+- Time
+- Os
+- Re
+- Calendar
 
