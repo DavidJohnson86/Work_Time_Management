@@ -1,7 +1,7 @@
 Approach/Scope:
 
 This tool provides you an ultimate work time management tool. Which can help you a lot when,
-especially when the system on your company will collapse. The data is stored in the folders
+especially the system in your company collapse. The data is stored in the folders
 with the name of the year. When the Data has been checked it will evaluate your result:
 - Worked hours
 - Worked days
