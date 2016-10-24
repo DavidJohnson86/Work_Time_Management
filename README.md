@@ -11,7 +11,6 @@ with the name of the year. When the Data has been checked it will evaluate your 
 You can print your time datas. The datas has been stored in a specific directory for a 
 printable format.
 
-Required tools : Python 2.7
 
 Used internal libraries :
 - Tkinter
